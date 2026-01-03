@@ -12,7 +12,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GenresModule } from './genres/genres.module';
-import { NoorModule } from './noor/noor.module';
+import { MailModule } from './mail/mail.module';
 
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
@@ -58,7 +58,7 @@ const ENV = process.env.NODE_ENV; // this prvoides the current environment
       }),
     }),
     GenresModule,
-    NoorModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

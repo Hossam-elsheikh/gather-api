@@ -11,11 +11,10 @@ import { CommunityMember } from 'src/communities/entities/community-member.entit
 import { CommunityJoinRequest } from 'src/communities/entities/community-join-request.entity';
 import { UserGenre } from './user-genre.entity';
 
-
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ unique: true })
   username: string;
@@ -28,6 +27,8 @@ export class User {
 
   @Column({ unique: true })
   email: string;
+  @Column({ unique: true, nullable: true })
+  googleId: string;
 
   @Column()
   password: string;
@@ -49,15 +50,15 @@ export class User {
 
   /* Relations */
 
-  @OneToMany(() => Community, community => community.owner)
+  @OneToMany(() => Community, (community) => community.owner)
   ownedCommunities: Community[];
 
-  @OneToMany(() => CommunityMember, member => member.user)
+  @OneToMany(() => CommunityMember, (member) => member.user)
   memberships: CommunityMember[];
 
-  @OneToMany(() => CommunityJoinRequest, request => request.user)
+  @OneToMany(() => CommunityJoinRequest, (request) => request.user)
   joinRequests: CommunityJoinRequest[];
 
-  @OneToMany(() => UserGenre, ug => ug.user)
+  @OneToMany(() => UserGenre, (ug) => ug.user)
   genres: UserGenre[];
 }

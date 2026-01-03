@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   DefaultValuePipe,
   Get,
@@ -7,31 +8,37 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { GetUserParamsDto } from './dtos/get-user-params.dto';
-import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './providers/users.service';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { AuthType } from 'src/auth/enums/auth-type.enum';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { GetUserParamsDto } from './dtos/get-user-params.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
+
+  @Auth(AuthType.None)
+
   @Get()
-  public getUsers() {
-    return 'get users';
-  }
-
-  @Get('/{:id}')
-  public getUser(
-    @Param() getUserParamsDto: GetUserParamsDto,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit: number,
+  public getUsers(
+    @Param() getUserParamDto: GetUserParamsDto,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(10), ParseIntPipe) page: number,
   ) {
-    console.log(getUserParamsDto, page, limit);
-
-    return 'get user';
+    return this.userService.findAll(getUserParamDto, limit, page);
   }
   @Post()
-  public createUser(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
+  @UseInterceptors(ClassSerializerInterceptor)
+  public CreateUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.createUser(createUserDto); // this not needed to be async
   }
+
+
+
+
+  
 }
