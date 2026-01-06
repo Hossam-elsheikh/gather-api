@@ -26,16 +26,13 @@ export class CreateUserProvider {
   public async createUser(createUserDto: CreateUserDto) {
     let existingUser;
     // handling exception duplicate key
-    try {
+
       existingUser = await this.userRepository.findOne({
         where: {
           email: createUserDto.email,
         },
       });
-    } catch (error) {
-      throw new RequestTimeoutException('something went wrong');
-    }
-
+    
     if (existingUser) {
       throw new BadRequestException(
         'The user already exist, please check your email',

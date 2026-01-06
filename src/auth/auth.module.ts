@@ -13,6 +13,8 @@ import { LogoutProvider } from './providers/logout.provider';
 import { GoogleAuthController } from './social/google-auth.controller';
 import { GoogleAuthService } from './social/providers/google-auth.service';
 import { AuthController } from './auth.controller';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import jwtConfig from './config/jwt.config';
 
 @Module({
@@ -29,12 +31,14 @@ import jwtConfig from './config/jwt.config';
     GoogleAuthService,
     MeProvider,
     LogoutProvider,
+    JwtStrategy,
   ],
   exports: [AuthService, HashingProvider],
   imports: [
     forwardRef(() => UsersModule),
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()), // asProvider save extra  useFactory implementation poilerplate code
+    PassportModule,
   ],
 })
 export class AuthModule {}
