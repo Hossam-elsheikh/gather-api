@@ -27,12 +27,12 @@ export class CreateUserProvider {
     let existingUser;
     // handling exception duplicate key
 
-      existingUser = await this.userRepository.findOne({
-        where: {
-          email: createUserDto.email,
-        },
-      });
-    
+    existingUser = await this.userRepository.findOne({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+
     if (existingUser) {
       throw new BadRequestException(
         'The user already exist, please check your email',
@@ -41,7 +41,9 @@ export class CreateUserProvider {
 
     let newUser = this.userRepository.create({
       ...createUserDto,
-      password: await this.hashingProvider.hashPassword(createUserDto.password),
+      passwordHash: await this.hashingProvider.hashPassword(
+        createUserDto.password,
+      ),
     });
 
     try {

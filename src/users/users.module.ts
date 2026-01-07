@@ -8,7 +8,6 @@ import { FindOneByGoogleIdProvider } from './providers/find-one-by-google-id.pro
 import { CreateGoogleUserProvider } from './providers/create-google-user.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { UserGenre } from './entities/user-genre.entity';
 
 @Module({
   controllers: [UsersController],
@@ -26,9 +25,6 @@ import { UserGenre } from './entities/user-genre.entity';
     FindOneByGoogleIdProvider,
     CreateGoogleUserProvider,
   ],
-  imports: [
-    forwardRef(() => AuthModule),
-    TypeOrmModule.forFeature([User, UserGenre]),
-  ],
+  imports: [forwardRef(() => AuthModule), TypeOrmModule.forFeature([User])],
 })
 export class UsersModule {}

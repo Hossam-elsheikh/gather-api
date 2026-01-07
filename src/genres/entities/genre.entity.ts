@@ -1,21 +1,21 @@
-import { CommunityGenre } from 'src/communities/entities/community-genre.entity';
-import { UserGenre } from 'src/users/entities/user-genre.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { BaseEntity } from 'src/common/BaseEntity';
+import { Community } from 'src/communities/entities/community.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Entity, Column, ManyToMany } from 'typeorm';
 
 @Entity('genres')
-export class Genre {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Genre extends BaseEntity {
   @Column({ unique: true })
-  name: string;
+  name: string; // e.g., "Technology", "Sci-Fi", "Cooking"
 
-  @Column({ unique: true })
-  slug: string;
+  @Column()
+  description: string;
 
-  @OneToMany(() => UserGenre, ug => ug.genre)
-  users: UserGenre[];
+  // Users interested in this genre
+  @ManyToMany(() => User, (user) => user.interests)
+  interestedUsers: User[];
 
-  @OneToMany(() => CommunityGenre, cg => cg.genre)
-  communities: CommunityGenre[];
+  // Communities tagged with this genre
+  @ManyToMany(() => Community, (community) => community.genres)
+  taggedCommunities: Community[];
 }

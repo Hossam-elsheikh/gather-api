@@ -1,4 +1,4 @@
-export interface ActiveUserInterface{
-    sub:number, // id of the user
-    email:string
+export interface ActiveUserInterface {
+  sub: number; // id of the user
+  email: string;
 }

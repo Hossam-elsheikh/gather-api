@@ -15,7 +15,7 @@ export class MailService {
       template:'./welcome',
       context:{
         // propeties to use in the template
-        name:user.firstName,
+        name:user.username,
         email:user.email,
         loginUrl:'http://localhost:3000'
       }

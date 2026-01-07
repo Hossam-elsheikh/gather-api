@@ -27,7 +27,7 @@ export class SigninProvider {
     try {
       isEqual = await this.hashingProvider.comparePassword(
         signinDto.password,
-        user.password || '',
+        user.passwordHash || '',
       );
     } catch (error) {
       throw new RequestTimeoutException(error, {

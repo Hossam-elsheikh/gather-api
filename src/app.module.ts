@@ -4,19 +4,20 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
-import { TagsModule } from './tags/tags.module';
 import { CommunitiesModule } from './communities/communities.module';
 import { CommentsModule } from './comments/comments.module';
-import { ReactionsModule } from './reactions/reactions.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GenresModule } from './genres/genres.module';
 import { MailModule } from './mail/mail.module';
+import { VotesModule } from './votes/votes.module';
+import { ConversationsModule } from './conversations/conversations.module';
 
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import envValidations from './config/env.validation';
+
 // this is a workaround for newer versions of TypeORM
 if (!global.crypto) {
   const crypto = require('crypto');
@@ -29,10 +30,8 @@ const ENV = process.env.NODE_ENV; // this prvoides the current environment
     UsersModule,
     AuthModule,
     PostsModule,
-    TagsModule,
     CommunitiesModule,
     CommentsModule,
-    ReactionsModule,
     NotificationsModule,
     ConfigModule.forRoot({
       isGlobal: true, // make it available in all modules
@@ -59,6 +58,8 @@ const ENV = process.env.NODE_ENV; // this prvoides the current environment
     }),
     GenresModule,
     MailModule,
+    VotesModule,
+    ConversationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

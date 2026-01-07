@@ -22,7 +22,6 @@ export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Auth(AuthType.None)
-
   @Get()
   public getUsers(
     @Param() getUserParamDto: GetUserParamsDto,
@@ -31,14 +30,10 @@ export class UsersController {
   ) {
     return this.userService.findAll(getUserParamDto, limit, page);
   }
+  @Auth(AuthType.None)
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   public CreateUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto); // this not needed to be async
   }
-
-
-
-
-  
 }

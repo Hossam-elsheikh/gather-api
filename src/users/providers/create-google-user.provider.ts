@@ -8,17 +8,17 @@ import { Repository } from 'typeorm';
 export class CreateGoogleUserProvider {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository:Repository<User>
+    private readonly userRepository: Repository<User>,
   ) {}
 
-  public async createGoogleUser(googleUser:GoogleUser){
+  public async createGoogleUser(googleUser: GoogleUser) {
     try {
-        const user =  this.userRepository.create(googleUser)
-        return await this.userRepository.save(user)
+      const user = this.userRepository.create(googleUser);
+      return await this.userRepository.save(user);
     } catch (error) {
-        throw new ConflictException(error,{
-            description:'could not create a new user'
-        })
+      throw new ConflictException(error, {
+        description: 'could not create a new user',
+      });
     }
   }
 }

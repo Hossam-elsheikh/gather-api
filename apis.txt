@@ -1,0 +1,63 @@
+Main Functions / API Endpoints
+Here are the RESTful endpoints you should consider implementing, highlighting the specific logic for the "Genre/Interest" feature.
+
+A. Authentication & Users
+POST /auth/register - Register new user.
+POST /auth/login - Login (return JWT).
+GET /users/me - Get current profile.
+PATCH /users/me - Update bio/avatar.
+GET /genres - List all available genres (for user selection).
+PUT /users/me/interests - Update user interests (Accepts array of Genre IDs).
+
+B. Discovery (The "Gather" Algorithm)
+GET /communities/discover - (Crucial)
+Logic: Fetch communities where community.genres overlap with user.interests. Sort by member count or activity.
+GET /communities/search?q= - Search communities by name.
+
+C. Communities
+POST /communities - Create a community (Requires at least one Genre tag).
+GET /communities/:id - Get community details.
+GET /communities/:id/posts - Get posts within a community (Pagination).
+POST /communities/:id/join - Join a community.
+POST /communities/:id/leave - Leave a community.
+
+D. Posts
+POST /posts - Create a post (Requires communityId).
+GET /posts/feed - Get a feed of posts from communities the user has joined.
+GET /posts/:id - Get single post with comments.
+PATCH /posts/:id - Edit post.
+DELETE /posts/:id - Delete post.
+
+E. Interactions (Votes & Comments)
+POST /votes - Toggle vote (Accepts { targetType: 'post' | 'comment', targetId: string, value: 1 | -1 }). If the vote exists and is the same, remove it (toggle off).
+POST /comments - Create a comment.
+POST /comments/:id/reply - Reply to a specific comment.
+
+F. Genre Management (Admin or Curated)
+POST /genres - Create a new genre (Admin only).
+GET /genres/trending - Get genres with the most activity.
+
+G. Notifications
+GET /notifications
+Query Params: ?unread=true (optional)
+Logic: Fetch notifications for currentUser. Order by createdAt DESC. Join with sender, post, and comment to send full data to frontend.
+GET /notifications/unread-count
+Logic: SELECT COUNT(*) FROM notification WHERE recipient = user AND isRead = false.
+PATCH /notifications/:id/read
+Logic: Set isRead = true.
+POST /notifications/read-all
+Logic: Bulk update all unread notifications for user to read = true.
+
+H. Direct Messages
+GET /conversations
+Logic: Find all conversations where currentUser is a participant.
+Pro Tip: You usually want to fetch the "Last Message" in this query too, to show a preview in the chat list.
+POST /conversations
+Body: { participantId: "uuid" }
+Logic: Check if a conversation already exists between currentUser and participantId. If yes, return it. If no, create a new one and add both users.
+GET /conversations/:id/messages
+Query Params: ?page=1&limit=20
+Logic: Fetch messages for this conversation.
+POST /conversations/:id/messages
+Body: { content: "Hello" }
+Logic: Create a message, link to conversation, set sender to currentUser.

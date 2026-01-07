@@ -1,52 +1,34 @@
+import { BaseEntity } from 'src/common/BaseEntity';
+import { Genre } from 'src/genres/entities/genre.entity';
+import { Post } from 'src/posts/entities/post.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
-import { CommunityMember } from './community-member.entity';
-import { CommunityGenre } from './community-genre.entity';
-import { CommunityJoinRequest } from './community-join-request.entity';
-
+import { Entity, Column, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 
 @Entity('communities')
-export class Community {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class Community extends BaseEntity {
+  @Column({ unique: true })
+  name: string; // e.g., "g/SpaceX"
 
   @Column()
-  name: string;
-
-  @Column({ unique: true })
-  slug: string;
+  title: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ name: 'cover_image', nullable: true })
-  coverImage: string;
+  @Column({ nullable: true })
+  bannerUrl: string;
 
-  @Column({ name: 'is_private', default: false })
-  isPrivate: boolean;
-
-  @ManyToOne(() => User, user => user.ownedCommunities)
+  @ManyToOne(() => User, (user) => user.ownedCommunities)
   owner: User;
 
-  @Column({ name: 'owner_id' })
-  ownerId: string;
+  @OneToMany(() => Post, (post) => post.community)
+  posts: Post[];
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  @ManyToMany(() => User, (user) => user.joinedCommunities)
+  members: User[];
 
-  @OneToMany(() => CommunityMember, member => member.community)
-  members: CommunityMember[];
-
-  @OneToMany(() => CommunityGenre, cg => cg.community)
-  genres: CommunityGenre[];
-
-  @OneToMany(() => CommunityJoinRequest, request => request.community)
-  joinRequests: CommunityJoinRequest[];
+  // --- THE TWIST: Community Genres ---
+  @ManyToMany(() => Genre, (genre) => genre.taggedCommunities)
+  @JoinTable() // Owner side
+  genres: Genre[];
 }

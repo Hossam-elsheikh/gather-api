@@ -16,6 +16,9 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import jwtConfig from './config/jwt.config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthenticationGuard } from './guards/authentication/authentication.guard';
+import { AccessTokenGuard } from './guards/access-token/access-token.guard';
 
 @Module({
   controllers: [AuthController, GoogleAuthController],
@@ -32,6 +35,11 @@ import jwtConfig from './config/jwt.config';
     MeProvider,
     LogoutProvider,
     JwtStrategy,
+    AccessTokenGuard,
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
   ],
   exports: [AuthService, HashingProvider],
   imports: [

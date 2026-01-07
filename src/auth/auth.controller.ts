@@ -5,7 +5,9 @@ import {
   HttpStatus,
   Post,
   Get,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { AuthService } from './providers/auth.service';
 import { SigninDTO } from './dtos/signin.dto';
 import { AuthType } from './enums/auth-type.enum';
@@ -21,15 +23,49 @@ export class AuthController {
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   @Auth(AuthType.None)
-  public async signIn(@Body() signInDto: SigninDTO) {
-    return this.authService.login(signInDto);
+  public async signIn(
+    @Body() signInDto: SigninDTO,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const tokens = await this.authService.login(signInDto);
+
+    response.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    response.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    return tokens;
   }
 
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @Auth(AuthType.None)
-  public async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authService.refreshTokens(refreshTokenDto);
+  public async refreshTokens(
+    @Body() refreshTokenDto: RefreshTokenDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const tokens = await this.authService.refreshTokens(refreshTokenDto);
+
+    response.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    response.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    return tokens;
   }
 
   @Get('me')
@@ -42,7 +78,12 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @Auth(AuthType.Bearer)
-  public async logout(@AcitveUser() user: ActiveUserInterface) {
+  public async logout(
+    @AcitveUser() user: ActiveUserInterface,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    response.clearCookie('access_token');
+    response.clearCookie('refresh_token');
     return this.authService.logout(user.sub);
   }
 }
